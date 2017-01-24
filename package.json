@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "eventproxy": "^0.3.5",
+    "koa": "^1.2.4",
+    "koa-router": "^7.1.0",
+    "koa-session": "^3.4.0",
+    "md5": "^2.2.1",
+    "request-promise": "^4.1.1",
+    "superagent": "^2.3.0",
+    "superagent-charset": "^1.1.1",
+    "superagent-promise": "^1.1.0",
+    "uuid": "^3.0.1"
+  }
+}
