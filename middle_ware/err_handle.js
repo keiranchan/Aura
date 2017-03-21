@@ -1,5 +1,5 @@
 'use strict';
-let err = function *() {
+let err = function *(next) {
     try {
         yield next;
     }
@@ -9,7 +9,8 @@ let err = function *() {
         this.body = {
             name: e.name,
             message: e.message,
-            status: e.status
+            status: e.status,
+            ret: -1
         }
     }
 };
