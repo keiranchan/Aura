@@ -1,34 +1,41 @@
 'use strict';
+
+const serve = require('koa-static');
 const koa = require('koa');
 const router = require('koa-router')();
+const session = require('koa-generic-session');
+const MongoStore = require('koa-generic-session-mongo');
 const koaBody = require('koa-body');
 const bodyParser = require('koa-bodyparser');
-const session = require('koa-session');
-var scheme = require('koa-scheme');
+const scheme = require('koa-scheme');
 const err_ware = require('./middle_ware/err_handle');
 const newApi = require("./routers/index");
+const config = require('config-lite');
+const cors = require('koa-cors');
+const jwt = require('jwt-simple');
 const app = koa();
+
+app.keys = [config.key];
+
 /**
  *  middle_wares
  */
+
+app.use(cors());
 app.use(err_ware);
+
 app.use(bodyParser());
+app.use(session({
+    store: new MongoStore(config.mongodb)
+}));
 app.use(scheme(__dirname + '/middle_ware/schema', {debug: true}));
 
 app.use(router.routes());
 app.use(router.allowedMethods());
 router.use("/api", newApi.routes());
 
-/*app.use(function* () {
-    if (this.path === '/signup') {
-        console.log(this.request.body.password);
-        this.body = {
-            user: {
-                id: this.request.body.password
-            }
-        };
-    }
-});*/
+//加载表态文件
+app.use(serve(__dirname + '/upload'));
 
 app.host = process.env.IP || 'localhost';
 app.port = process.env.PORT || '8090';

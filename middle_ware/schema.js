@@ -4,36 +4,45 @@ const validator = require('validator');
 const crypto = require('crypto');
 
 module.exports = {
-    /*"/(.*)": {
-        "request": {
-        }
-    },*/
     "(POST|put) /api/newDetail":{
         "request": {
-            "url": validator.isURL
+
         }
     },
-    "(POST|put) /api/signup": {
+    "(POST) /api/createUser": {
         "request": {
             "body": {
-                "name": /^[a-zA-Z]+$/,
-                "age": validator.isNumeric,
-                "like": validator.isNumeric,
-                "email": validator.isEmail,
                 "gender": /^(male|female)$/,
                 "password": /^[a-zA-Z0-9]{6,12}$/,
                 "repassword": checkRepassword
             }
         },
         "response": {
-            "body.user.id": /^[a-zA-Z0-9]{32}$/
+            //"body.user.id": /^[a-zA-Z0-9]{32}$/
         }
     },
-    "POST /signin": {
+    "(GET|POST) /api/loginIn": {
+        "request": {
+            "session": checkNotLogin
+        }
+    },
+    "POST /api/loginIn": {
         "request": {
             "body": checkSigninBody
         }
+    },
+    "POST /api/createTopic": {
+        "request": {
+            "body": checkCreateBody
+        }
+    },
+    "POST /api/replyTopic": {
+        "request": {
+            "session": checkLogin,
+            "body": checkReplyTopic
+        }
     }
+
 };
 
 function md5 (str) {
@@ -49,6 +58,30 @@ function checkRepassword(repassword) {
     return true;
 }
 
+function checkNotLogin() {
+    if (this.session && this.session.user) {
+        return {
+            ret:0,
+            msg:"已登陆"
+        };
+    }
+    return {
+        ret:-1,
+        msg:"未登陆"
+    };
+}
+
+function checkLogin() {
+    if (!this.session || !this.session.user) {
+        return {
+            ret:-1,
+            msg:"未登陆",
+            errCode:0
+        };
+    }
+    return true;
+}
+
 
 function checkSigninBody() {
     var body = this.request.body;
@@ -61,5 +94,34 @@ function checkSigninBody() {
     }
     body.name = validator.trim(body.name);
     body.password = md5(validator.trim(body.password));
+    return true;
+}
+
+function checkCreateBody() {
+    var body = this.request.body;
+    if (!body || !body.title || body.title.length < 10) {
+        return {error: '请填写合法标题!'};
+    }
+    else if (!body.tab) {
+        return {error: '请选择版块!'};
+    }
+    else if (!body.content) {
+        return {error: '请填写内容!'};
+    }
+    body.title = validator.trim(body.title);
+    body.tab = validator.trim(body.tab);
+    body.content = validator.trim(body.content);
+    return true;
+}
+
+function checkReplyTopic() {
+    var body = this.request.body;
+    if (!body || !body.topic_id || !validator.isMongoId(body.topic_id)) {
+        return {ret:-1,error: '回复的帖子不存在!'};
+    }
+    else if (!body.content) {
+        return {ret:-1,error: '回复的内容为空!'};
+    }
+    body.content = validator.trim(body.content);
     return true;
 }

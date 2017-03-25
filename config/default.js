@@ -5,13 +5,12 @@ var cache = require('koa-router-cache');
 var MemoryCache = cache.MemoryCache;
 
 module.exports = {
-    port: process.env.PORT || 8090,
     mongodb: {
-        url: 'mongodb://<dbuser>:<dbpassword>@ds137360.mlab.com:37360/aura'
+        url: 'mongodb://root:123456@ds060009.mlab.com:60009/aura'
     },
     schemeConf: path.join(__dirname, './default.scheme'),
     staticCacheConf: path.join(__dirname, '../theme/publices'),
-    renderConf: path.join(__dirname, '../theme/config'),
+    key: "Aura2017",
     routerConf: 'routes',
     routerCacheConf: {
         'GET /': {

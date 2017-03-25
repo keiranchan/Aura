@@ -1,6 +1,9 @@
 'use strict';
 
 const Models = require('../service/core');
+const config = require('config-lite');
+const moment = require('moment');
+const jwt = require('jwt-simple');
 const $User = Models.$User;
 
 
@@ -15,8 +18,20 @@ function * createUser() {
             name: reqData.name,
             email: reqData.email
         };
+        let expires = moment().add(7,'days').valueOf();
+        let token = jwt.encode({
+            iss: reqData.name,
+            exp: expires
+        }, config.key);
+
+        let userInfo = yield $User.getUserByName(reqData.name);
         this.body = {
             ret:0,
+            userInfo:userInfo,
+            data:{
+                token : token,
+                expires: expires
+            },
             msg:"注册成功"
         }
     }
@@ -35,8 +50,18 @@ function * loginIn() {
             name: userInfo.name,
             email: userInfo.email
         };
+        let expires = moment().add(7,'days').valueOf();
+        let token = jwt.encode({
+            iss: reqData.name,
+            exp: expires
+        }, config.key);
         this.body = {
             ret:0,
+            userInfo:userInfo,
+            data:{
+                token : token,
+                expires: expires
+            },
             msg:"登陆成功"
         }
     }
@@ -49,8 +74,31 @@ function * loginOut() {
     }
 }
 
+
+function * uploadFace(req, resp) {
+    console.log(this.query)
+    console.log(this.req.files.file)
+    let r = yield $User.uploadFace(this.query.name,this.req.files.file.path);
+    this.body = {
+        faceUrl : this.req.files
+    }
+}
+
+
+function * checkLogin() {
+    this.body = {
+        ret: 0,
+        userInfo: this.query.userInfo,
+        data :{
+            token: this.query.token
+
+        }
+    }
+}
 module.exports = {
     createUser,
     loginIn,
-    loginOut
+    loginOut,
+    uploadFace,
+    checkLogin
 };

@@ -14,3 +14,8 @@ exports.getUserById = function (id) {
 exports.getUserByName = function (name) {
     return User.findOne({name: name}).exec();
 };
+
+//保存用户faceUrl
+exports.uploadFace = function (name,url) {
+    return User.updateOne({name: name},{$set:{"faceUrl":url}}).exec();
+};

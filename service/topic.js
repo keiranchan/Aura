@@ -17,7 +17,7 @@ exports.getTopicById = function (id) {
 exports.getTopicsByTab = cache(function getTopicsByTab(tab, p) {
     var query = {};
     if (tab) { query.tab = tab; }
-    return Topic.find(query).skip((p - 1) * 10).sort('-updated_at').limit(10).select('-content').exec();
+    return Topic.find(query).skip((p - 1) * 10).sort('-updated_at').limit(10).exec();
 }, {
     key: function (tab, p) {
         tab = tab || 'all';
