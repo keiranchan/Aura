@@ -13,11 +13,13 @@ const search = require("../controller/Search");
 const jwtauth = require('../middle_ware/check_token');
 
 
-var upload = multer({dest: 'upload'})
+var upload = multer({dest: 'upload'});
 
 
 router.post("/newDetail",bodyParser(),news.getNewsDetail);
 router.post("/newSummary",bodyParser(),news.getNewsSummary);
+router.post("/getScienceList",bodyParser(),news.getScienceList);
+router.post("/getScienceDetail",bodyParser(),news.getScienceDetail);
 
 router.post("/loginIn",bodyParser(),users.loginIn);
 router.get("/loginIn",jwtauth,users.checkLogin);
@@ -34,6 +36,8 @@ router.post("/replyTopic",jwtauth,comment.replyTopic);
 router.get("/getTopicDetail",comment.getTopicDetail);
 
 router.post("/search",bodyParser(),search.search);
+router.post("/searchDetail",bodyParser(),search.searchDetail);
+router.get("/getAllExhibits",search.getAllExhibits);
 
 
 router.get("/",function *() {
