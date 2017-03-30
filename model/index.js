@@ -14,6 +14,6 @@ mongoose.connect(config.url, function (err) {
 
 
 
-exports.User = require('./user');
-exports.Topic = require('./topic');
-exports.Comment = require('./comment');
+exports.User = require('./User');
+exports.Topic = require('./Topic');
+exports.Comment = require('./Comment');
